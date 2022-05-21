@@ -28,9 +28,22 @@ let images = {
     paddle: new Image()
 }
 
-images.background.src = './assets/bg-space.webp';
-images.ball.src = './assets/ball.webp';
-images.paddle.src = './assets/paddle.webp';
+images.background.src = './images/bg-space.webp';
+images.ball.src = './images/ball.webp';
+images.paddle.src = './images/paddle.webp';
+
+let sounds = {
+    breakout: new Audio(),
+    brick: new Audio(),
+    gameOver: new Audio(),
+    paddle: new Audio()
+}
+sounds.breakout.src = './sounds/breakout.mp3';
+sounds.brick.src = './sounds/brick.mp3';
+sounds.gameOver.src = './sounds/game-over.mp3';
+sounds.paddle.src = './sounds/paddle.mp3';
+
+
 
 let brickField = [];
 
@@ -58,6 +71,7 @@ function resetBall() {
     ball.y = canvas.height - paddle.height - 2 * ball.radius;
     ball.dx = game.speed * (Math.random() * 2 - 1);  // Random trajectory
     ball.dy = -game.speed; // Up
+    sounds.breakout.play();
 }
 
 function resetPaddle() {
@@ -85,13 +99,14 @@ function initBricks() {
 }
 
 function animate() { 
-    draw();
+    paint();
     update();
     detectCollision();
     detectBrickCollision();
     checkLevel();
 
     // Check for lost ball
+    // TODO: move to function, add game.over.
     if (ball.y - ball.radius > canvas.height) {
         game.lives -= 1;
         if (game.lives === 0) {
@@ -106,7 +121,7 @@ function animate() {
     game.requestId = requestAnimationFrame(animate);
 }
 
-function draw() {
+function paint() {
     ctx.drawImage(images.background, 0, 0, canvas.width, canvas.height);
     ctx.drawImage(images.ball, ball.x, ball.y, 2 * ball.radius, 2 * ball.radius);
     ctx.drawImage(images.paddle, paddle.x, paddle.y, paddle.width, paddle.height);
@@ -136,7 +151,7 @@ function update() {
 function checkLevel() {
     if (brickField.every((b) => b.hitsLeft === 0)) {
         game.level++;
-        // speed++; should we increase speed?
+        game.speed++;
         resetBall();
         resetPaddle();
     }
@@ -176,6 +191,7 @@ function detectCollision() {
         ball.dy = -ball.dy;
     }
     if (hitPaddle()) {
+        sounds.paddle.play();
         // TODO change this logic to angles with sin/cos
         // Change x depending on where on the paddle the ball bounces.
         // Bouncing ball more on one side draws ball a little to that side.
@@ -198,19 +214,21 @@ function detectCollision() {
 
 function detectBrickCollision() {
     let directionChanged = false;
+
     brickField.forEach((brick) => {
         if (brick.hitsLeft && isBallInsideBrick(brick)) {
-          brick.hitsLeft--;
-          if (brick.hitsLeft === 1) {
-            brick.color = 'darkgray';
-        }
-        game.score += brick.points;
+            sounds.brick.play();
+            brick.hitsLeft--;
+            if (brick.hitsLeft === 1) {
+                brick.color = 'darkgray';
+            }
+            game.score += brick.points;
 
-        if (!directionChanged) {
-          directionChanged = true;
-          detectCollisionDirection(brick);
+            if (!directionChanged) {
+                directionChanged = true;
+                detectCollisionDirection(brick);
+            }
         }
-      }
     });
 
     function isBallInsideBrick(brick) {
@@ -222,7 +240,7 @@ function detectBrickCollision() {
   }
   
   function detectCollisionDirection(brick) {
-      if (ball.x + 2* ball.radius - ball.dx <= brick.x) { // Hit from left
+        if (ball.x + 2 * ball.radius - ball.dx <= brick.x) { // Hit from left
         ball.dx = -ball.dx;
       } else if (ball.x - ball.dx >= brick.x + brick.width) { // Hit from right
         ball.dx = -ball.dx;
@@ -250,6 +268,7 @@ function keyUpHandler(e) {
 }
 
 function gameOver() {
+    sounds.gameOver.play();
     cancelAnimationFrame(game.requestId);
     ctx.font = '40px Arial';
     ctx.fillStyle = 'red';
