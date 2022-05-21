@@ -202,4 +202,4 @@ function gameOver() {
     cancelAnimationFrame(requestId);
     console.log('GAME OVER');
 }
-
+}
