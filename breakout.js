@@ -250,7 +250,9 @@ function gameOver() {
     cancelAnimationFrame(game.requestId);
     ctx.font = '40px Arial';
     ctx.fillStyle = 'red';
-    ctx.fillText('GAME OVER', canvas.width / 2 - 100, canvas.height / 2);    }
+    ctx.fillText('GAME OVER', canvas.width / 2 - 100, canvas.height / 2);    
+
 }
+
     
 
