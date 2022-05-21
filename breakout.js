@@ -126,7 +126,7 @@ function checkLevel() {
     if (bricks.every(b => b.every((b) => b.hitsLeft === 0))) {
         level++;
         // speed++; should we increase speed?
-        initBall();
+        resetBall();
         initBricks();
     }
 }
@@ -187,6 +187,13 @@ function detectCollission() {
     if (ball.y + ball.radius > canvas.height - paddle.height && ball.y + ball.radius < canvas.height) {
         if(ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
             ball.dy = -ball.dy;
+
+            // Change x depending on where on the paddle the ball bounces.
+            // Bouncing ball more on one side draws ball a little to that side.
+            const drawingConst = 5
+            const paddleMiddle = 2;
+            const algo = (((ball.x - paddle.x) / paddle.width) * drawingConst);
+            ball.dx = ball.dx + algo - paddleMiddle;
         }
     }
 }
@@ -225,5 +232,6 @@ function keyUpHandler(e) {
 function gameOver() {
     cancelAnimationFrame(requestId);
     console.log('GAME OVER');
-}
+        }
+    }
 }
