@@ -58,6 +58,7 @@ const sounds = {
     paddle: new Audio('./sounds/paddle.mp3')
 }
 sounds.music.loop = true;
+sounds.music.volume = 0.6;
 
 let brickField = [];
 
@@ -258,6 +259,12 @@ function keyDownHandler(e) {
     if (game.on && (e.key === 'm' || e.key === 'M')) {
         game.music ? sounds.music.pause() : sounds.music.play();
         game.music = !game.music;
+    }
+    if (e.key === 'ArrowUp' && sounds.music.volume <= 0.9) {
+        sounds.music.volume += 0.1;
+    }
+    if (e.key === 'ArrowDown' && sounds.music.volume >= 0.1) {
+        sounds.music.volume -= 0.1;
     }
     if (e.key === 'ArrowRight') {
         game.rightKey = true;
