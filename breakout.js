@@ -10,9 +10,9 @@ let game = {
     timeoutId: null,
     leftKey: false,
     rightKey: false,
-    time: null,
     on: false,
-    music: true
+    music: true,
+    sfx: true
 }
 let paddle = {
     height: 20,
@@ -57,8 +57,6 @@ const sounds = {
     music: new Audio('./sounds/music.mp3'),
     paddle: new Audio('./sounds/paddle.mp3')
 }
-sounds.music.loop = true;
-sounds.music.volume = 0.6;
 
 let brickField = [];
 
@@ -72,9 +70,9 @@ function play() {
     resetPaddle();
     initBricks();
 
-    sounds.breakout.play();
+    game.sfx && sounds.breakout.play();
     // Start music after starting sound ends.
-    setTimeout(() => sounds.music.play(), 2000);
+    setTimeout(() => game.music && sounds.music.play(), 2000);
 
     animate();
 }
@@ -85,6 +83,13 @@ function resetGame() {
     game.level = 1;
     game.lives = 3;
     game.time = { start: performance.now(), elapsed: 0, refreshRate: 16  };
+}
+
+function initSounds() {
+    sounds.music.loop = true;
+    for (const [key] of Object.entries(sounds)) {
+        sounds[key].volume = 0.5;
+    }
 }
 
 function resetBall() {
@@ -212,7 +217,7 @@ function detectCollision() {
     if (hitPaddle()) {
         ball.dy = -ball.dy;
         ball.y = canvas.height - paddle.height - 2 * ball.radius;
-        sounds.paddle.play();
+        game.sfx && sounds.paddle.play();
         // TODO change this logic to angles with sin/cos
         // Change x depending on where on the paddle the ball bounces.
         // Bouncing ball more on one side draws ball a little to that side.
@@ -234,7 +239,7 @@ function detectBrickCollision() {
     brickField.forEach((brick) => {
         if (brick.hitsLeft && isBallInsideBrick(brick)) {
             sounds.brick.currentTime = 0;
-            sounds.brick.play();
+            game.sfx && sounds.brick.play();
             brick.hitsLeft--;
             if (brick.hitsLeft === 1) {
                 brick.color = 'darkgray';
@@ -265,14 +270,17 @@ function keyDownHandler(e) {
         play();
     }
     if (game.on && (e.key === 'm' || e.key === 'M')) {
-        game.music ? sounds.music.pause() : sounds.music.play();
+        game.music ? sounds.music.play() : sounds.music.pause();
+    }
+    if (game.on && (e.key === 's' || e.key === 'S')) {
+        game.sfx = !game.sfx;
         game.music = !game.music;
     }
-    if (e.key === 'ArrowUp' && sounds.music.volume <= 0.9) {
-        sounds.music.volume += 0.1;
+    if (e.key === 'ArrowUp') {
+        volumeUp();
     }
-    if (e.key === 'ArrowDown' && sounds.music.volume >= 0.1) {
-        sounds.music.volume -= 0.1;
+    if (e.key === 'ArrowDown') {
+        volumeDown();
     }
     if (e.key === 'ArrowRight') {
         game.rightKey = true;
@@ -321,7 +329,7 @@ function initNextLevel() {
     game.level++;
     game.speed++;
     sounds.music.pause();
-    sounds.levelCompleted.play();
+    game.sfx && sounds.levelCompleted.play();
     ctx.font = '50px ArcadeClassic';
     ctx.fillStyle = 'yellow';
     ctx.fillText(`LEVEL ${game.level}!`, canvas.width / 2 - 80, canvas.height / 2);
@@ -332,7 +340,7 @@ function isGameOver() {
 
     if (isBallLost()) {
         game.lives -= 1;
-        sounds.ballLost.play();
+        game.sfx && sounds.ballLost.play();
         if (game.lives === 0) {
             gameOver();
             return true;
@@ -347,12 +355,29 @@ function gameOver() {
     game.on = false;
     sounds.music.pause();
     sounds.currentTime = 0;
-    sounds.gameOver.play();
+    game.sfx && sounds.gameOver.play();
     ctx.font = '50px ArcadeClassic';
     ctx.fillStyle = 'red';
     ctx.fillText('GAME OVER', canvas.width / 2 - 100, canvas.height / 2);    
 
 }
 
-    
+function volumeDown() {
+    if (sounds.music.volume >= 0.1) {
+        for (const [key] of Object.entries(sounds)) {
+            sounds[key].volume -= 0.1;
+        }
+    }
+}
+
+
+function volumeUp() {
+    if (sounds.music.volume <= 0.9) {
+        for (const [key] of Object.entries(sounds)) {
+            sounds[key].volume += 0.1;
+        }
+    }
+}
+
+initSounds(); 
 
