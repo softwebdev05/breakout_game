@@ -7,7 +7,8 @@ let game = {
     requestId: null,
     timeoutId: null,
     leftKey: false,
-    rightKey: false
+    rightKey: false,
+    time: null
 }
 let paddle = {
     height: 20,
@@ -68,10 +69,11 @@ function play() {
 }
 
 function resetGame() {
-    game.speed = 6;
+    game.speed = 7;
     game.score = 0;
     game.level = 1;
     game.lives = 3;
+    game.time = { start: performance.now(), elapsed: 0, refreshRate: 16  };
 }
 
 function resetBall() {
@@ -105,12 +107,17 @@ function initBricks() {
     }
 }
 
-function animate() { 
-    paint();
-    update();
-    detectCollision();
-    detectBrickCollision();
-    if (isLevelCompleted() || isGameOver()) return;
+function animate(now = 0) { 
+    game.time.elapsed = now - game.time.start;
+    if (game.time.elapsed > game.time.refreshRate) {
+        game.time.start = now;
+
+        paint();
+        update();
+        detectCollision();
+        detectBrickCollision();
+        if (isLevelCompleted() || isGameOver()) return;
+    }    
 
     game.requestId = requestAnimationFrame(animate);
 }
