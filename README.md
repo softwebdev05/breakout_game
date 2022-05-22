@@ -1,6 +1,6 @@
 # Breakout Game Javascript
 
-![breakout picture](assets/breakout-title.png)
+![breakout picture](assets/share-image-large.png)
 
 ## Resources
 
