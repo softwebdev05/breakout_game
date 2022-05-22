@@ -8,7 +8,8 @@ let game = {
     timeoutId: null,
     leftKey: false,
     rightKey: false,
-    time: null
+    time: null,
+    on: false
 }
 let paddle = {
     height: 20,
@@ -19,7 +20,7 @@ let ball = {
     radius: 10
 };
 let brick = {
-    rows: 2,
+    rows: 5,
     cols: 10,
     get width() { return canvas.width / this.cols; },
     height: 30
@@ -60,6 +61,7 @@ let brickField = [];
 function play() {   
     cancelAnimationFrame(game.requestId);
     clearTimeout(game.timeoutId);
+    game.on = true;
 
     resetGame();
     resetBall();
@@ -94,6 +96,7 @@ function resetPaddle() {
 }
 
 function initBricks() {
+    brickField = [];
     const topMargin = 30;
     const colors = ['red', 'orange', 'yellow', 'blue', 'green'];
 
@@ -246,6 +249,9 @@ function detectBrickCollision() {
 }
 
 function keyDownHandler(e) {
+    if (!game.on && e.key === ' ') {
+        play();
+    }
     if (e.key === 'ArrowRight') {
         game.rightKey = true;
     }
@@ -307,6 +313,7 @@ function isGameOver() {
 }
 
 function gameOver() {
+    game.on = false;
     sounds.music.pause();
     sounds.currentTime = 0;
     sounds.gameOver.play();
