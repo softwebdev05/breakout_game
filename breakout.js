@@ -145,11 +145,11 @@ function drawBricks() {
 
 
 function drawScore() {
-    ctx.font = '16px Arial';
+    ctx.font = '24px ArcadeClassic';
     ctx. fillStyle = 'white';
     const { level, score } = game;
-    ctx.fillText(`Level: ${level}`, 5, 20);
-    ctx.fillText(`Score: ${score}`, canvas.width / 2 - 50, 20);
+    ctx.fillText(`Level: ${level}`, 5, 23);
+    ctx.fillText(`Score: ${score}`, canvas.width / 2 - 50, 23);
 }
 
 function drawLives() {
@@ -259,7 +259,7 @@ function initNextLevel() {
     game.level++;
     game.speed++;
     sounds.levelCompleted.play();
-    ctx.font = '40px Arial';
+    ctx.font = '50px ArcadeClassic';
     ctx.fillStyle = 'yellow';
     ctx.fillText(`LEVEL ${game.level}!`, canvas.width / 2 - 80, canvas.height / 2);
 }
@@ -282,7 +282,7 @@ function isGameOver() {
 
 function gameOver() {
     sounds.gameOver.play();
-    ctx.font = '40px Arial';
+    ctx.font = '50px ArcadeClassic';
     ctx.fillStyle = 'red';
     ctx.fillText('GAME OVER', canvas.width / 2 - 100, canvas.height / 2);    
 

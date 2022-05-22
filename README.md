@@ -2,7 +2,7 @@
 
 JavaScript Breakout Game
 
-![breakout picture](assets/share-image-large.png)
+![breakout picture](assets/breakout-title.png)
 
 ## Sound effects from [freesound.org](https://freesound.org):
 
