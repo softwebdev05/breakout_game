@@ -11,7 +11,8 @@ let game = {
     leftKey: false,
     rightKey: false,
     time: null,
-    on: false
+    on: false,
+    music: true
 }
 let paddle = {
     height: 20,
@@ -253,6 +254,10 @@ function detectBrickCollision() {
 function keyDownHandler(e) {
     if (!game.on && e.key === ' ') {
         play();
+    }
+    if (game.on && (e.key === 'm' || e.key === 'M')) {
+        game.music ? sounds.music.pause() : sounds.music.play();
+        game.music = !game.music;
     }
     if (e.key === 'ArrowRight') {
         game.rightKey = true;
